@@ -1,4 +1,5 @@
 import React from 'react';
+import { AppRegistry } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
@@ -86,5 +87,8 @@ const App = () => {
     </NavigationContainer>
   );
 };
+
+// Register the main component
+AppRegistry.registerComponent('main', () => App);
 
 export default App; 
