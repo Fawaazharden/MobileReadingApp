@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  Pressable,
   Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -52,6 +53,7 @@ const GradeSelectionScreen = ({ navigation }) => {
   };
 
   const handleGradeSelection = (grade) => {
+    console.log('Grade button pressed:', grade); // Debug log
     Alert.alert(
       'Confirm Grade',
       `Are you sure you want to select Grade ${grade}?`,
@@ -64,12 +66,16 @@ const GradeSelectionScreen = ({ navigation }) => {
 
   // Following SOLID - Open/Closed Principle: Component can be extended
   const renderGradeItem = ({ item: grade }) => (
-    <TouchableOpacity
-      style={[
+    <Pressable
+      style={({ pressed }) => [
         styles.gradeItem,
-        selectedGrade === grade && styles.selectedGradeItem
+        selectedGrade === grade && styles.selectedGradeItem,
+        pressed && styles.pressedGradeItem
       ]}
       onPress={() => handleGradeSelection(grade)}
+      accessible={true}
+      accessibilityLabel={`Select Grade ${grade}`}
+      accessibilityRole="button"
     >
       <Text style={[
         styles.gradeText,
@@ -77,7 +83,7 @@ const GradeSelectionScreen = ({ navigation }) => {
       ]}>
         Grade {grade}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   if (isLoading) {
@@ -90,6 +96,18 @@ const GradeSelectionScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/* Test button to verify TouchableOpacity works */}
+      <TouchableOpacity
+        style={styles.testButton}
+        onPress={() => {
+          console.log('Test button pressed');
+          Alert.alert('Test', 'TouchableOpacity is working!');
+        }}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.testButtonText}>Test Button (Tap Me)</Text>
+      </TouchableOpacity>
+
       <Text style={styles.title}>Select Your Grade</Text>
       <Text style={styles.subtitle}>
         Choose your current grade level to get started
@@ -102,6 +120,9 @@ const GradeSelectionScreen = ({ navigation }) => {
         numColumns={3}
         contentContainerStyle={styles.gradesList}
         showsVerticalScrollIndicator={false}
+        scrollEnabled={true}
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled={false}
       />
       
       {selectedGrade && (
@@ -158,6 +179,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 80,
+    minWidth: 80,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -166,6 +188,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+    pointerEvents: 'auto',
+    overflow: 'hidden',
   },
   selectedGradeItem: {
     backgroundColor: '#4CAF50',
@@ -189,6 +213,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '600',
+  },
+  testButton: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  testButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  pressedGradeItem: {
+    backgroundColor: '#e0e0e0',
   },
 });
 
